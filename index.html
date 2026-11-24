@@ -72,21 +72,24 @@
     border-radius:0;
   }
   .rbook:hover,.rbook:focus-visible{background:none;box-shadow:none}
+  /* 背景圖裡童詩集的左上角是直角；書改成右翻、左上角變圓之後，
+     用天空的顏色蓋住那個露出來的直角 */
+  .poems-book::before{content:"";position:absolute;left:0;top:0;width:6cqw;height:6cqw;background:rgb(228,215,221)}
   .rbook .pages{
     position:absolute;inset:1.2% 1.2% 0 1.2%;
-    border-radius:1.4cqw 5.6cqw 1.4cqw 1.4cqw;
+    border-radius:5.6cqw 1.4cqw 1.4cqw 1.4cqw;
     background:repeating-linear-gradient(90deg,#fbf6ec 0 2px,#ece2d0 2px 3px);
   }
   .rbook .cover{
     position:absolute;inset:0;overflow:hidden;
-    border-radius:1.4cqw 5.6cqw 1.4cqw 1.4cqw;
+    border-radius:5.6cqw 1.4cqw 1.4cqw 1.4cqw;
     transform-origin:right center;
     transition:transform .9s cubic-bezier(.5,0,.2,1),filter .3s;
     box-shadow:inset -7px 0 10px -6px rgba(0,0,0,.35);
     color:#fff;
   }
   /* 翻動時也保持圓角（有些瀏覽器在 3D 轉動時會忽略 overflow 的圓角裁切） */
-  .rbook .cover{clip-path:inset(0 round 1.4cqw 5.6cqw 1.4cqw 1.4cqw)}
+  .rbook .cover{clip-path:inset(0 round 5.6cqw 1.4cqw 1.4cqw 1.4cqw)}
   .novel-book .pages{border-radius:5.6cqw 1.4cqw 1.4cqw 1.4cqw}
   .novel-book .cover{clip-path:inset(0 round 5.6cqw 1.4cqw 1.4cqw 1.4cqw)}
   .novel-book .cover{transform-origin:right center;border-radius:5.6cqw 1.4cqw 1.4cqw 1.4cqw;box-shadow:inset -7px 0 10px -6px rgba(0,0,0,.4)}
