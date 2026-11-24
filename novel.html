@@ -774,7 +774,7 @@ Simon或許還在嗎？他以前總喜歡和我談論家裡的瑣事。比如他
     const availW = innerWidth >= 1000 ? innerWidth * 0.74 : innerWidth - 24;
     single = isNarrow();
     book.classList.toggle('single', single);
-    ph = Math.min(availH, document.fullscreenElement ? 2000 : 900);
+    ph = Math.min(availH, (document.fullscreenElement || document.webkitFullscreenElement) ? 2000 : 900);
     pw = Math.round(ph * 0.7);
     if (single) pw = Math.min(pw, Math.floor(innerWidth - 32));
     else if (pw * 2 > availW) pw = Math.floor(availW / 2);
@@ -1283,22 +1283,28 @@ Simon或許還在嗎？他以前總喜歡和我談論家裡的瑣事。比如他
   document.getElementById('fontUp').addEventListener('click', () => setScale(scaleIdx + 1));
   const note = document.getElementById('note');
   const fsBtn = document.getElementById('fullscreen');
+  // iPhone 的 Safari 等瀏覽器不讓網頁全螢幕：偵測到不支援就直接把按鈕藏起來
+  const fsEl = () => document.fullscreenElement || document.webkitFullscreenElement;
+  const canFullscreen = !!(document.fullscreenEnabled || document.webkitFullscreenEnabled);
+  if (!canFullscreen) fsBtn.hidden = true;
   fsBtn.addEventListener('click', async () => {
+    const root = document.documentElement;
     try {
-      if (document.fullscreenElement) await document.exitFullscreen();
-      else await document.documentElement.requestFullscreen();
+      if (fsEl()) await (document.exitFullscreen ? document.exitFullscreen() : document.webkitExitFullscreen());
+      else await (root.requestFullscreen ? root.requestFullscreen() : root.webkitRequestFullscreen());
     } catch (e) {
-      note.textContent = '這個瀏覽器不允許全螢幕，請改用瀏覽器本身的全螢幕（F11）。';
-      note.hidden = false;
-      setTimeout(() => { note.hidden = true; }, 3500);
+      // 支援但這次被擋下（例如被別的網頁嵌入時）：不再顯示提示，直接把按鈕藏起來
+      fsBtn.hidden = true;
     }
   });
-  document.addEventListener('fullscreenchange', () => {
-    const on = !!document.fullscreenElement;
+  const onFsChange = () => {
+    const on = !!fsEl();
     document.body.classList.toggle('fs', on);
     fsBtn.textContent = on ? '離開全螢幕' : '全螢幕';
     setTimeout(() => layout(true), 120);
-  });
+  };
+  document.addEventListener('fullscreenchange', onFsChange);
+  document.addEventListener('webkitfullscreenchange', onFsChange);
   document.getElementById('slider').addEventListener('input', e => {
     if (busy) return;
     if (single) idx = singleList()[+e.target.value]; else spread = +e.target.value;
