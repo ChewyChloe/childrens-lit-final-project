@@ -80,9 +80,9 @@
   .rbook .cover{
     position:absolute;inset:0;overflow:hidden;
     border-radius:1.4cqw 5.6cqw 1.4cqw 1.4cqw;
-    transform-origin:left center;
+    transform-origin:right center;
     transition:transform .9s cubic-bezier(.5,0,.2,1),filter .3s;
-    box-shadow:inset 7px 0 10px -6px rgba(0,0,0,.35);
+    box-shadow:inset -7px 0 10px -6px rgba(0,0,0,.35);
     color:#fff;
   }
   /* 翻動時也保持圓角（有些瀏覽器在 3D 轉動時會忽略 overflow 的圓角裁切） */
@@ -92,12 +92,12 @@
   .novel-book .cover{transform-origin:right center;border-radius:5.6cqw 1.4cqw 1.4cqw 1.4cqw;box-shadow:inset -7px 0 10px -6px rgba(0,0,0,.4)}
   .rbook .cover img{width:100%;height:100%;object-fit:cover;display:block}
   /* 滑鼠移上去：書封微微掀開，亮一點 */
-  .poems-book:hover .cover,.poems-book:focus-visible .cover{transform:rotateY(-16deg);filter:brightness(1.06)}
+  .poems-book:hover .cover,.poems-book:focus-visible .cover{transform:rotateY(16deg);filter:brightness(1.06)}
   .novel-book:hover .cover,.novel-book:focus-visible .cover{transform:rotateY(16deg);filter:brightness(1.06)}
   .rbook:focus-visible{outline:3px solid #fff;outline-offset:4px}
   /* 點下去：書封整個翻開 */
   .rbook.opening{clip-path:none}
-  .poems-book.opening .cover{transform:rotateY(-165deg)}
+  .poems-book.opening .cover{transform:rotateY(165deg)}
   .novel-book.opening .cover{transform:rotateY(165deg)}
 
   .poems-book .t{
@@ -106,12 +106,13 @@
     text-shadow:0 3px 12px rgba(10,20,60,.45);
   }
   .poems-book .a{position:absolute;top:calc(8% + 17cqw);left:0;right:0;text-align:center;font-size:4.6cqw;letter-spacing:.4em;opacity:.9}
+  .poems-book .au{position:absolute;top:calc(8% + 24cqw);left:0;right:0;text-align:center;font-size:4cqw;letter-spacing:.35em;opacity:.85;text-shadow:0 2px 8px rgba(10,20,60,.45)}
   .novel-book .cover{text-shadow:0 2px 10px rgba(30,30,90,.45)}
   .novel-book .t{
     position:absolute;top:8%;right:12%;writing-mode:vertical-rl;white-space:nowrap;
     font-family:var(--serif);font-weight:700;font-size:13cqw;letter-spacing:.08em;
   }
-  .novel-book .s{position:absolute;top:8%;right:calc(12% + 16cqw);writing-mode:vertical-rl;font-size:4.2cqw;letter-spacing:.35em;opacity:.85}
+  .novel-book .s{position:absolute;top:8%;right:calc(12% + 24cqw);writing-mode:vertical-rl;font-size:4.2cqw;letter-spacing:.35em;opacity:.85}
   .novel-book .au{position:absolute;top:8%;left:12%;writing-mode:vertical-rl;font-size:4.2cqw;letter-spacing:.35em;opacity:.9}
   .poems-label{left:28.2%;top:78.5%;width:13.5%;height:9.5%}
   .novel-label{left:58.6%;top:78.5%;width:15.6%;height:9.5%}
@@ -156,7 +157,7 @@
   <img src="書架.jpg" alt="粉彩黏土風的小世界：木頭長凳上放著童詩集《何為事實》和小說《HQU 7.1》，旁邊有融化的鬧鐘、香菇與飛羊">
   <a class="hot rbook poems-book" href="poems.html" aria-label="打開童詩集《何為事實》">
     <span class="pages"></span>
-    <span class="cover"><img src="童詩圖片/封面.jpg" alt=""><span class="t">何為事實</span><span class="a">童詩集</span></span>
+    <span class="cover"><img src="童詩圖片/封面.jpg" alt=""><span class="t">何為事實</span><span class="a">童詩集</span><span class="au">呂沛珍　著</span></span>
   </a>
   <a class="hot rbook novel-book" href="novel.html" aria-label="打開小說《HQU 7.1》">
     <span class="pages"></span>
