@@ -144,7 +144,9 @@
       padding:max(24px,env(safe-area-inset-top,0px)) 0 max(24px,env(safe-area-inset-bottom,0px));
     }
     html,body{overflow-x:clip}
-    .backdrop{display:block}
+    /* 上下不再用模糊放大的圖，改用從原圖最上緣（天空）與最下緣（沙地）取出的顏色，圖的上下邊再柔和淡入 */
+    body{background:linear-gradient(180deg,rgb(212,215,226) 0%,rgb(206,208,222) 42%,rgb(232,189,187) 58%,rgb(234,190,192) 100%)}
+    .backdrop{display:none}
     header{position:relative;padding:0 16px 6px}
     header h1{font-size:30px}
     header p{font-size:12px;margin-top:6px}
@@ -152,8 +154,8 @@
       flex:none;
       width:min(168vw, 112vh);
       margin-left:calc(min(168vw, 112vh) * -.028);   /* 讓兩本書的中心落在螢幕正中間 */
-      -webkit-mask-image:linear-gradient(180deg,transparent 0,#000 7%,#000 93%,transparent 100%);
-      mask-image:linear-gradient(180deg,transparent 0,#000 7%,#000 93%,transparent 100%);
+      -webkit-mask-image:linear-gradient(180deg,transparent 0,#000 9%,#000 91%,transparent 100%);
+      mask-image:linear-gradient(180deg,transparent 0,#000 9%,#000 91%,transparent 100%);
     }
   }
 

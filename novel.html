@@ -153,7 +153,9 @@
     border-radius:0 6px 6px 0;
     box-shadow:inset 18px 0 24px -14px rgba(60,40,20,.22),0 18px 40px -18px rgba(5,10,40,.6);
   }
-  .book.single .page{border-radius:6px !important;box-shadow:inset 14px 0 20px -14px rgba(60,40,20,.2),0 18px 40px -18px rgba(5,10,40,.6) !important}
+  /* 單頁（手機）：直排右翻書，書背在右、開口在左 */
+  .book.single .page{border-radius:6px 2px 2px 6px !important;box-shadow:inset -14px 0 20px -14px rgba(60,40,20,.22),0 18px 40px -18px rgba(5,10,40,.6) !important}
+  .book.single .slot.right::before{right:auto;left:calc(clamp(6px,.9vw,14px) * -1);border-radius:4px 0 0 4px}
   .page.blank{background:transparent;box-shadow:none !important}
 
   .pb{
@@ -761,8 +763,8 @@ Simon或許還在嗎？他以前總喜歡和我談論家裡的瑣事。比如他
   let single = isNarrow();
   let pw = 0, ph = 0;
   const SCALES = [0.6, 0.7, 0.8, 0.9, 1, 1.12, 1.25, 1.4, 1.6];
-  const FONT_KEY = 'hqu-font-scale';
-  let scaleIdx = isNarrow() ? 2 : 4;   // 手機預設 80%、電腦預設 100%
+  const FONT_KEY = 'hqu-font-scale-v2';   // 換新名稱：之前存過的字體大小會重設成新的預設
+  let scaleIdx = isNarrow() ? 1 : 4;   // 手機預設 70%、電腦預設 100%
   try { const v = parseFloat(localStorage.getItem(FONT_KEY)); const i = SCALES.indexOf(v); if (i >= 0) scaleIdx = i; } catch (e) {}
   const stage = document.getElementById('stage');
   function sizeBook() {
