@@ -137,16 +137,24 @@
   header p{margin-top:.5vw;font-size:clamp(11px,1vw,16px);letter-spacing:.32em}
 
   /* 直式螢幕（手機）：標題在上、整張圖在下，置中；上下墊模糊背景 */
+  /* 直式螢幕（手機）：把場景放大、裁到兩本書那一段，左右貼齊螢幕；上下柔和地淡進背景 */
   @media (max-aspect-ratio:1/1){
     body{
       display:flex;flex-direction:column;align-items:center;justify-content:center;
-      padding:20px max(16px,env(safe-area-inset-right,0px)) 20px max(16px,env(safe-area-inset-left,0px));
+      padding:max(24px,env(safe-area-inset-top,0px)) 0 max(24px,env(safe-area-inset-bottom,0px));
     }
+    html,body{overflow-x:clip}
     .backdrop{display:block}
-    header{position:relative;padding:0 0 14px}
+    header{position:relative;padding:0 16px 6px}
     header h1{font-size:30px}
     header p{font-size:12px;margin-top:6px}
-    .scene{border-radius:12px;box-shadow:0 30px 60px -30px rgba(70,50,120,.55)}
+    .scene{
+      flex:none;
+      width:min(168vw, 112vh);
+      margin-left:calc(min(168vw, 112vh) * -.028);   /* 讓兩本書的中心落在螢幕正中間 */
+      -webkit-mask-image:linear-gradient(180deg,transparent 0,#000 7%,#000 93%,transparent 100%);
+      mask-image:linear-gradient(180deg,transparent 0,#000 7%,#000 93%,transparent 100%);
+    }
   }
 
   .veil{position:fixed;inset:0;background:#fbf7ef;opacity:0;pointer-events:none;transition:opacity .5s ease .7s;z-index:50}

@@ -158,7 +158,7 @@
 
   .pb{
     position:absolute;
-    top:calc(var(--ph) * .085);bottom:calc(var(--ph) * .1);
+    top:calc(var(--ph) * .085 + 10px);bottom:calc(var(--ph) * .1);
     left:calc(var(--pw) * .1);right:calc(var(--pw) * .1);
     writing-mode:vertical-rl;
     font-family:var(--serif);
@@ -186,7 +186,8 @@
   }
   .runhead{
     position:absolute;top:calc(var(--ph) * .035);
-    font-size:10.5px;letter-spacing:.25em;color:var(--ink-soft);font-family:var(--sans);
+    max-width:calc(var(--pw) * .8);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;
+    font-size:10.5px;letter-spacing:.2em;color:var(--ink-soft);font-family:var(--sans);
   }
   .runhead{right:calc(var(--pw) * .1)}
   .page.l .runhead{right:auto;left:calc(var(--pw) * .1)}
@@ -275,15 +276,19 @@
   body.fs .topbar{padding-top:10px}
 
   /* 刪除線：先出現前句 → 劃掉 → 出現後句 */
-  .pb s.anim{text-decoration:none;position:relative;font-weight:700}
-  .pb s.anim::after{
-    content:"";position:absolute;left:calc(50% - 1px);top:0;width:2px;height:100%;
-    background:currentColor;transform:scaleY(1);transform-origin:top;
+  .pb s.anim{
+    text-decoration:none;font-weight:700;
+    background:linear-gradient(currentColor,currentColor) no-repeat center top / 2px 100%;
+    -webkit-box-decoration-break:clone;box-decoration-break:clone;
   }
-  .page.shown s.anim::after{transform:scaleY(0);animation:strike .7s ease-in-out 1.1s forwards}
-  @keyframes strike{to{transform:scaleY(1)}}
+  .page.shown s.anim{animation:strike .7s ease-in-out 1.1s both}
+  @keyframes strike{from{background-size:2px 0%}to{background-size:2px 100%}}
   .page.shown .after .twa{opacity:0;animation:fadein .05s linear forwards;animation-delay:calc(var(--d) * 140ms + 2000ms)}
   @keyframes fadein{to{opacity:1}}
+
+  /* 翻頁中、還沒落定的那一面：維持動畫開始前的狀態，落定後才從頭播放，不會先閃出全文 */
+  .page.pre s.anim{background-size:2px 0%}
+  .page.pre .after .twa,.page.pre .tw,.page.pre .fact,.page.pre .stream{opacity:0}
 
   /* 逐字出現 */
   .page.shown .tw{opacity:0;animation:fadein .05s linear forwards;animation-delay:calc(var(--d) * 110ms + 900ms)}
@@ -751,12 +756,13 @@ Simon或許還在嗎？他以前總喜歡和我談論家裡的瑣事。比如他
   // ---------- 版面尺寸 ----------
   const root = document.documentElement;
   const book = document.getElementById('book');
-  // 一律雙頁攤開（封面、封底單獨顯示）
-  const single = false;
+  // 寬螢幕雙頁攤開（封面、封底單獨顯示）；手機等窄螢幕一次一頁
+  const isNarrow = () => innerWidth < 640;
+  let single = isNarrow();
   let pw = 0, ph = 0;
   const SCALES = [0.6, 0.7, 0.8, 0.9, 1, 1.12, 1.25, 1.4, 1.6];
   const FONT_KEY = 'hqu-font-scale';
-  let scaleIdx = 4;
+  let scaleIdx = isNarrow() ? 2 : 4;   // 手機預設 80%、電腦預設 100%
   try { const v = parseFloat(localStorage.getItem(FONT_KEY)); const i = SCALES.indexOf(v); if (i >= 0) scaleIdx = i; } catch (e) {}
   const stage = document.getElementById('stage');
   function sizeBook() {
@@ -764,13 +770,16 @@ Simon或許還在嗎？他以前總喜歡和我談論家裡的瑣事。比如他
     const availH = Math.max(200, stage.getBoundingClientRect().height - 24);
     // 寬螢幕兩側留給裝飾，書佔畫面約四分之三寬
     const availW = innerWidth >= 1000 ? innerWidth * 0.74 : innerWidth - 24;
+    single = isNarrow();
+    book.classList.toggle('single', single);
     ph = Math.min(availH, document.fullscreenElement ? 2000 : 900);
     pw = Math.round(ph * 0.7);
-    if (pw * 2 > availW) pw = Math.floor(availW / 2);
+    if (single) pw = Math.min(pw, Math.floor(innerWidth - 32));
+    else if (pw * 2 > availW) pw = Math.floor(availW / 2);
     ph = Math.round(Math.min(ph, pw / 0.6));
     root.style.setProperty('--pw', pw + 'px');
     root.style.setProperty('--ph', ph + 'px');
-    const base = Math.max(9, Math.min(16, pw * 0.034));
+    const base = Math.max(9, Math.min(16, pw * (single ? 0.05 : 0.034)));
     root.style.setProperty('--fs', (base * SCALES[scaleIdx]).toFixed(1) + 'px');
     document.getElementById('fsz').textContent = Math.round(SCALES[scaleIdx] * 100) + '%';
     document.getElementById('fontDown').disabled = scaleIdx === 0;
@@ -949,6 +958,7 @@ Simon或許還在嗎？他以前總喜歡和我談論家裡的瑣事。比如他
   let busy = false;
 
   const singleList = () => seq.map((p, i) => i).filter(i => seq[i].type !== 'blank');
+  const visibleIdx = () => single ? [idx] : [2 * spread, 2 * spread + 1];
   const lastSpread = () => seq.length / 2 - 1;
 
   function put(slot, p) {
@@ -1094,9 +1104,9 @@ Simon或許還在嗎？他以前總喜歡和我談論家裡的瑣事。比如他
     clearTimeout(pickTimer);
     if (endingPick || !pickBox.hidden) return;
     const ep = endingPage();
-    if (ep < 0 || ![2 * spread, 2 * spread + 1].includes(ep)) return;
+    if (ep < 0 || !visibleIdx().includes(ep)) return;
     pickTimer = setTimeout(() => {
-      if (endingPick || ![2 * spread, 2 * spread + 1].includes(endingPage())) return;
+      if (endingPick || !visibleIdx().includes(endingPage())) return;
       pickBox.hidden = false;
       busy = true;
       requestAnimationFrame(() => { pickBox.classList.add('on'); pickBox.querySelector('button').focus(); });
@@ -1134,7 +1144,7 @@ Simon或許還在嗎？他以前總喜歡和我談論家裡的瑣事。比如他
     crt.className = 'crt';
     requestAnimationFrame(() => { if (!crt.hidden) crt.classList.add('go'); });
     setTimeout(() => {
-      spread = lastSpread();
+      if (single) idx = singleList().slice(-1)[0]; else spread = lastSpread();
       show();
       crt.classList.add('leave');
     }, 3600);
@@ -1160,12 +1170,15 @@ Simon或許還在嗎？他以前總喜歡和我談論家裡的瑣事。比如他
     sl.value = String(cur - 1);
   }
 
-  function makeLeaf(side, front, back) {
+  function makeLeaf(side, front, back, preFront) {
     const leaf = document.createElement('div');
     leaf.className = 'leaf ' + side;
-    const fs = side === 'on-left' ? 'l' : 'r', bs = side === 'on-left' ? 'r' : 'l';
+    // 單頁模式只有右頁的位置，翻動中的紙也維持右頁的版面（章名位置不跳動）
+    const fs = single ? 'r' : (side === 'on-left' ? 'l' : 'r'), bs = single ? 'r' : (side === 'on-left' ? 'r' : 'l');
     const f = document.createElement('div'); f.className = 'face front'; f.appendChild(renderPage(front, fs));
     const b = document.createElement('div'); b.className = 'face back'; b.appendChild(renderPage(back, bs));
+    b.firstChild.classList.add('pre');
+    if (preFront) f.firstChild.classList.add('pre');
     leaf.append(f, b);
     book.appendChild(leaf);
     return leaf;
@@ -1217,7 +1230,7 @@ Simon或許還在嗎？他以前總喜歡和我談論家裡的瑣事。比如他
       if (pos <= 0) return;
       busy = true;
       const prevIdx = list[pos - 1];
-      const leaf = makeLeaf('on-left', seq[prevIdx], null);
+      const leaf = makeLeaf('on-left', seq[prevIdx], null, true);
       leaf.style.left = 'auto'; leaf.style.right = '0'; leaf.style.transformOrigin = 'right center';
       idx = prevIdx; updateUi();
       animate(leaf, 180, 0, () => put(slotR, seq[prevIdx]));
@@ -1275,7 +1288,7 @@ Simon或許還在嗎？他以前總喜歡和我談論家裡的瑣事。比如他
   });
   document.getElementById('slider').addEventListener('input', e => {
     if (busy) return;
-    spread = +e.target.value;
+    if (single) idx = singleList()[+e.target.value]; else spread = +e.target.value;
     show();
   });
   document.getElementById('next').addEventListener('click', next);
