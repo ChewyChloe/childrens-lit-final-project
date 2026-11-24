@@ -79,13 +79,21 @@
     text-shadow:0 2px 10px rgba(10,20,70,.5);
   }
   .hero .author{margin-top:10px;font-size:14px;letter-spacing:.2em;opacity:.85;text-shadow:0 2px 10px rgba(10,20,70,.5)}
+  /* 回到書架：和小說頁一樣的米色黏土膠囊 */
   .shelf-link{
-    position:fixed;top:14px;left:max(16px,env(safe-area-inset-left,0px));z-index:20;
-    color:#fff;text-decoration:none;font-size:13px;letter-spacing:.15em;
-    background:rgba(30,50,110,.45);backdrop-filter:blur(6px);
-    border:1px solid rgba(255,255,255,.35);border-radius:999px;padding:7px 14px;
+    position:fixed;top:max(14px,env(safe-area-inset-top,0px));left:max(16px,env(safe-area-inset-left,0px));z-index:20;
+    display:inline-flex;align-items:center;gap:.4em;white-space:nowrap;text-decoration:none;
+    height:clamp(40px,4.6vmin,62px);padding:0 clamp(14px,1.8vmin,26px) 0 clamp(10px,1.2vmin,18px);
+    border-radius:999px;font-family:var(--serif);font-weight:700;
+    font-size:clamp(14px,1.6vmin,22px);letter-spacing:.1em;color:#a8876f;
+    background:linear-gradient(180deg,#f6e2cd 0%,#ecccae 100%);
+    box-shadow:inset 0 2px 0 rgba(255,255,255,.65),inset 0 -5px 9px rgba(160,105,70,.25),0 9px 16px -8px rgba(5,10,40,.6);
+    text-shadow:0 1px 0 rgba(255,255,255,.75),0 -1px 0 rgba(140,95,65,.25);
+    transition:transform .15s,filter .15s;
   }
-  .shelf-link:hover{background:rgba(30,50,110,.7)}
+  .shelf-link:hover{filter:brightness(1.04);transform:translateY(-1px)}
+  .shelf-link:active{transform:translateY(2px)}
+  .shelf-link .back{width:1.1em;height:1.1em;fill:none;stroke:currentColor;stroke-width:3;stroke-linecap:round;stroke-linejoin:round;filter:drop-shadow(0 1px 0 rgba(255,255,255,.75))}
   .bubble{
     position:absolute;bottom:-40px;border-radius:50%;
     background:radial-gradient(circle at 30% 30%,rgba(255,255,255,.9),rgba(255,255,255,.15) 40%,rgba(255,255,255,.05) 70%);
@@ -286,7 +294,7 @@
 </head>
 <body>
 
-<a class="shelf-link" href="index.html">← 回到書架</a>
+<a class="shelf-link" href="index.html"><svg class="back" viewBox="0 0 24 24" aria-hidden="true"><path d="M15 5 L8 12 L15 19"/></svg><span>回到書架</span></a>
 <header class="hero" id="top">
   <div class="hero-pin">
     <img class="hero-img" src="童詩圖片/封面.jpg" alt="戴著巨大眼鏡的小島上，孩子站在階梯頂端望向大海">

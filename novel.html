@@ -1082,6 +1082,17 @@ Simon或許還在嗎？他以前總喜歡和我談論家裡的瑣事。比如他
         if (ci >= plain[si].length) { streams[si].innerHTML = texts[si]; si++; ci = 0; }
       }, 28);
     }
+    // 「以上敘述……」三句一句一句出現；三句都出現之後，後面的內容（系統執行自我修正中……）才接著出現
+    const facts = [...page.querySelectorAll('.fact')];
+    if (facts.length) {
+      const all = [...page.querySelectorAll('.pb > *')];
+      const lastFact = facts[facts.length - 1];
+      const later = all.slice(all.indexOf(lastFact) + 1).filter(el => !el.classList.contains('gap'));
+      const maxI = Math.max(...facts.map(f => parseInt(getComputedStyle(f).getPropertyValue('--i')) || 0));
+      const doneAt = maxI * 1700 + 600 + 500 + 400;   // 和 CSS 的出現時間對齊，再多停一下
+      later.forEach(el => el.classList.add('waiting'));
+      later.forEach((el, i) => setTimeout(() => { if (page.isConnected) el.classList.remove('waiting'); }, doneAt + i * 350));
+    }
     // 亂碼：字一直跳，一個一個定格
     page.querySelectorAll('.scramble').forEach(p => {
       const target = [...p.textContent];
