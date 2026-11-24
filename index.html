@@ -58,9 +58,9 @@
   .hot.label:hover,.hot.label:focus-visible{background:rgba(255,255,255,.12);box-shadow:0 0 30px 6px rgba(255,255,255,.35)}
   /* 依原圖 2000×1493 的位置換算成百分比 */
   /* 書的位置與下緣的沙丘線，都是從原圖 2000×1493 量出來的 */
-  .poems-book{left:24.05%;top:18.75%;width:23.8%;height:44.54%;
+  .poems-book{left:23.8%;top:18.75%;width:24.3%;height:44.54%;
     --clip:polygon(-15% -15%, 115% -15%, 115% 93.2%, 100% 93.2%, 98.7% 93.2%, 91.2% 92.6%, 86.1% 92.8%, 76.1% 95%, 66% 95.5%, 58.4% 97.9%, 48.3% 98.3%, 38.2% 99.1%, 30.7% 98.3%, 23.1% 96.5%, 15.5% 93.2%, 8% 91.4%, 0.4% 90.2%, 0% 90.2%, -15% 90.2%)}
-  .novel-book{left:54.85%;top:18.82%;width:23.65%;height:43.8%;
+  .novel-book{left:54.6%;top:18.82%;width:24.15%;height:43.8%;
     --clip:polygon(-15% -15%, 115% -15%, 115% 84.4%, 100% 84.4%, 93.9% 85.5%, 88.8% 86.7%, 83.7% 90.1%, 78.6% 93.4%, 73.6% 95.3%, 66% 95.3%, 55.8% 95.1%, 48.2% 96.6%, 40.6% 98.6%, 33% 98.6%, 22.8% 97.4%, 15.2% 95.4%, 10.1% 91.9%, 0% 90.8%, -15% 90.8%)}
 
   /* 真正的書：蓋在圖裡的書上，下緣照沙丘線裁掉，看起來仍插在沙裡；
@@ -74,7 +74,14 @@
   .rbook:hover,.rbook:focus-visible{background:none;box-shadow:none}
   /* 背景圖裡童詩集的左上角是直角；書改成右翻、左上角變圓之後，
      用天空的顏色蓋住那個露出來的直角 */
-  .poems-book::before{content:"";position:absolute;left:0;top:0;width:6cqw;height:6cqw;background:rgb(228,215,221)}
+  /* 補丁直接用背景圖本身、取正上方一點點的天空，和周圍漸層接得上。
+     換算：整張圖寬 = 書框寬 / 0.243 = 411.5cqw；書框左上角在圖上的 (97.94cqw, 57.6cqw) */
+  .poems-book::before{
+    content:"";position:absolute;left:0;top:0;width:6.2cqw;height:2.9cqw;
+    background:url("書架.jpg") no-repeat;background-size:411.5cqw auto;
+    background-position:-97.94cqw -54.5cqw;
+  }
+  .poems-book::after{content:none}
   .rbook .pages{
     position:absolute;inset:1.2% 1.2% 0 1.2%;
     border-radius:5.6cqw 1.4cqw 1.4cqw 1.4cqw;
